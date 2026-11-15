@@ -1,0 +1,31 @@
+name: Test
+
+on:
+  pull_request:
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 26
+      - run: npm test
+      - run: node index.js "$RUNNER_TEMP/app"
+      - run: npm install --no-audit --no-fund
+        working-directory: ${{ runner.temp }}/app
+      - run: npm run lint
+        working-directory: ${{ runner.temp }}/app
+      - run: npm run typecheck
+        working-directory: ${{ runner.temp }}/app
+      - run: npm test
+        working-directory: ${{ runner.temp }}/app
+      - run: npm run build
+        working-directory: ${{ runner.temp }}/app
+      - run: node scripts/smoke-template.mjs "$RUNNER_TEMP/app"
