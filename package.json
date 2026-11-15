@@ -1,3 +1,28 @@
 {
-	"name": "@cloudensis/create-hono"
+	"name": "@cloudensis/create-hono",
+	"version": "0.0.0",
+	"description": "Create a Hono application for cloudensis.",
+	"type": "module",
+	"bin": "index.js",
+	"scripts": {
+		"test": "node --test \"test/*.test.*\""
+	},
+	"files": [
+		"index.js",
+		"template",
+		"!template/node_modules",
+		"!template/package-lock.json",
+		"!template/.cloudflare",
+		"!template/.wrangler"
+	],
+	"engines": {
+		"node": ">=26"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/cloudensis/create-hono.git"
+	},
+	"publishConfig": {
+		"access": "public"
+	}
 }

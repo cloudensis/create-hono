@@ -1,9 +1,9 @@
-# @coudensis/create-hono
+# @cloudensis/create-hono
 
 Create a Hono application for cloudensis.
 
 ## Quick Start
 
 ```sh
-npm create @cloudensis/hono
+npm create @cloudensis/hono [project-name]
 ```
