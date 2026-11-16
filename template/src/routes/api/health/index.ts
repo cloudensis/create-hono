@@ -1,5 +1,5 @@
-import { defineHandler } from "hono/factory";
+import type { Handler } from "hono";
 
-const GET = defineHandler((c) => c.json({ status: "ok" }));
+const GET: Handler = (c) => c.json({ status: "ok" });
 
 export { GET };

@@ -1,9 +1,9 @@
-import { defineHandler } from "hono/factory";
+import type { Handler } from "hono";
 import { posts } from "./data";
 
 const ssg = true;
 
-const GET = defineHandler((c) =>
+const GET: Handler = (c) =>
 	c.render(
 		<>
 			<h1>Blog</h1>
@@ -16,7 +16,6 @@ const GET = defineHandler((c) =>
 			</ul>
 		</>,
 		{ title: "Blog", description: "記事の一覧" },
-	),
-);
+	);
 
 export { GET, ssg };

@@ -26,11 +26,10 @@
 - 同じ URL にマッチするルートがあると起動時にエラーになります。
 
 ```tsx
-import { defineHandler } from "hono/factory";
+import type { Handler } from "hono";
 
-export const GET = defineHandler((c) =>
-	c.render(<h1>Hello</h1>, { title: "Hello", description: "説明" }),
-);
+export const GET: Handler = (c) =>
+	c.render(<h1>Hello</h1>, { title: "Hello", description: "説明" });
 ```
 
 ## SSG

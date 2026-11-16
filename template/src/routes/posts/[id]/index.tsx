@@ -1,11 +1,11 @@
-import { defineHandler } from "hono/factory";
+import type { Handler } from "hono";
 import { posts } from "../../data";
 
 const ssg = true;
 
 const ssgParams = () => posts.map((post) => ({ id: post.id }));
 
-const GET = defineHandler((c) => {
+const GET: Handler = (c) => {
 	const post = posts.find((post) => post.id === c.req.param("id"));
 	if (!post) return c.notFound();
 
@@ -26,6 +26,6 @@ const GET = defineHandler((c) => {
 		</>,
 		{ title: post.title, description: post.body },
 	);
-});
+};
 
 export { GET, ssg, ssgParams };

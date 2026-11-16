@@ -21,8 +21,8 @@ app.notFound((c) => {
 	});
 });
 
-app.onError((c) => {
-	console.error(c.error);
+app.onError((err, c) => {
+	console.error(err);
 	c.status(500);
 	return c.render(<h1>500 Internal Server Error</h1>, {
 		title: "500 Internal Server Error",
