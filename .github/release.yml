@@ -1,0 +1,10 @@
+# Release の「Generate release notes」で使う分類
+changelog:
+  categories:
+    # Dependabot は PR に dependencies ラベルを付ける
+    - title: Dependencies
+      labels:
+        - dependencies
+    - title: Changes
+      labels:
+        - "*"
