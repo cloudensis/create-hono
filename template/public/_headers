@@ -1,0 +1,14 @@
+# SSG したページと静的ファイルは Worker を通らないため、
+# src/index.tsx の secureHeaders() と同じヘッダーをここでも設定する
+/*
+  Cross-Origin-Resource-Policy: same-origin
+  Cross-Origin-Opener-Policy: same-origin
+  Origin-Agent-Cluster: ?1
+  Referrer-Policy: no-referrer
+  Strict-Transport-Security: max-age=15552000; includeSubDomains
+  X-Content-Type-Options: nosniff
+  X-DNS-Prefetch-Control: off
+  X-Download-Options: noopen
+  X-Frame-Options: SAMEORIGIN
+  X-Permitted-Cross-Domain-Policies: none
+  X-XSS-Protection: 0
