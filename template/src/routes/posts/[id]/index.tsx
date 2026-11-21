@@ -1,4 +1,5 @@
 import type { Handler } from "hono";
+import { excerpt } from "../../../site";
 import { posts } from "../../data";
 
 const ssg = true;
@@ -24,7 +25,7 @@ const GET: Handler = (c) => {
 			<h1>{post.title}</h1>
 			<p>{post.body}</p>
 		</>,
-		{ title: post.title, description: post.body },
+		{ title: post.title, description: excerpt(post.body), type: "article" },
 	);
 };
 
