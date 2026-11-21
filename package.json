@@ -2,6 +2,15 @@
 	"name": "@cloudensis/create-hono",
 	"version": "0.0.0",
 	"description": "Create a Hono application for cloudensis.",
+	"keywords": [
+		"hono",
+		"cloudflare",
+		"cloudflare-workers",
+		"create",
+		"template",
+		"ssg"
+	],
+	"license": "MIT",
 	"type": "module",
 	"bin": {
 		"create-hono": "index.js"
@@ -23,6 +32,10 @@
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/cloudensis/create-hono.git"
+	},
+	"homepage": "https://github.com/cloudensis/create-hono#readme",
+	"bugs": {
+		"url": "https://github.com/cloudensis/create-hono/issues"
 	},
 	"publishConfig": {
 		"access": "public"
