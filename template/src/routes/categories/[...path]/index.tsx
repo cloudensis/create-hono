@@ -1,8 +1,8 @@
-import { defineHandler } from "hono/factory";
+import type { Handler } from "hono";
 import { posts } from "../../data";
 
 // /categories/tech や /categories/tech/web にマッチし、そのカテゴリ以下の記事を表示する
-const GET = defineHandler((c) => {
+const GET: Handler = (c) => {
 	const path = c.req.param("path");
 	const items = posts.filter((post) =>
 		`${post.category.join("/")}/`.startsWith(`${path}/`),
@@ -22,6 +22,6 @@ const GET = defineHandler((c) => {
 		</>,
 		{ title: `カテゴリ: ${path}`, description: `${path} の記事` },
 	);
-});
+};
 
 export { GET };
