@@ -22,6 +22,37 @@ describe("parseRoute", () => {
 	});
 });
 
+describe("parseRoute の検証", () => {
+	it.each([
+		"[]/index.tsx",
+		"[...]/index.tsx",
+		"[a-b]/index.tsx",
+		"[1id]/index.tsx",
+	])("不正なパラメータ名はエラーにする: %s", (file) => {
+		expect(() => parseRoute(file)).toThrow(/パラメータ名/);
+	});
+
+	it.each([
+		"a:b/index.tsx",
+		"a*/index.tsx",
+		"a{b}/index.tsx",
+		"a?/index.tsx",
+		"(group)/index.tsx",
+	])("Hono のパスで特別な意味を持つ文字はエラーにする: %s", (file) => {
+		expect(() => parseRoute(file)).toThrow(file);
+	});
+
+	it("catch-all のあとにセグメントがあるとエラーにする", () => {
+		expect(() => parseRoute("docs/[...slug]/edit/index.tsx")).toThrow(
+			/catch-all/,
+		);
+	});
+
+	it("_ を含むパラメータ名は使える", () => {
+		expect(parseRoute("[user_id]/index.tsx").path).toBe("/:user_id");
+	});
+});
+
 describe("compareRoutes", () => {
 	const sorted = (files: string[]) =>
 		files
