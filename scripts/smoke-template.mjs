@@ -55,3 +55,9 @@ it("末尾スラッシュはスラッシュなしへリダイレクトする", a
 it("存在しないパスは 404 を返す", async () => {
 	assert.equal(await status("/no/such/page"), 404);
 });
+
+it("存在しない API は JSON の 404 を返す", async () => {
+	const res = await app.request("/api/no-such-api");
+	assert.equal(res.status, 404);
+	assert.deepEqual(await res.json(), { error: "Not Found" });
+});
