@@ -5,6 +5,7 @@ import path from "node:path";
 import { stdin, stdout } from "node:process";
 import { createInterface } from "node:readline/promises";
 import { fileURLToPath } from "node:url";
+import { parseArgs } from "node:util";
 
 const TEMPLATE_DIR = fileURLToPath(new URL("./template/", import.meta.url));
 const TEMPLATE_NAME = "hono-app";
@@ -27,7 +28,44 @@ const isEmptyDir = async (dir) => {
 	}
 };
 
-let target = process.argv[2];
+const USAGE = `Usage: npm create @cloudensis/hono [project-name]
+
+Options:
+  -h, --help     Show this help
+  -v, --version  Show the version`;
+
+let args;
+try {
+	args = parseArgs({
+		allowPositionals: true,
+		options: {
+			help: { type: "boolean", short: "h" },
+			version: { type: "boolean", short: "v" },
+		},
+	});
+} catch (error) {
+	console.error(`${error.message}\n\n${USAGE}`);
+	process.exit(1);
+}
+if (args.values.help) {
+	console.log(USAGE);
+	process.exit(0);
+}
+if (args.values.version) {
+	const pkg = JSON.parse(
+		await fs.readFile(new URL("./package.json", import.meta.url), "utf8"),
+	);
+	console.log(pkg.version);
+	process.exit(0);
+}
+if (args.positionals.length > 1) {
+	console.error(
+		`Too many arguments: ${args.positionals.join(" ")}\n\n${USAGE}`,
+	);
+	process.exit(1);
+}
+
+let target = args.positionals[0];
 if (!target) {
 	const rl = createInterface({ input: stdin, output: stdout });
 	target =
