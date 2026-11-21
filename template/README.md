@@ -45,4 +45,4 @@ SSG は Node で実行するため、`cloudflare:workers` や binding は使え�
 
 ## デプロイ
 
-GitHub で Release を公開すると `.github/workflows/deploy.yaml` がデプロイします。リポジトリの Secrets に `CLOUDFLARE_API_TOKEN` と `CLOUDFLARE_ACCOUNT_ID` を設定してください。
+GitHub で Release を公開すると `.github/workflows/deploy.yaml` がデプロイします（プレリリースはデプロイしません）。リポジトリの Secrets に `CLOUDFLARE_API_TOKEN` と `CLOUDFLARE_ACCOUNT_ID` を設定してください。

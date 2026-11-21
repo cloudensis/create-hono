@@ -25,7 +25,23 @@ jobs:
           node-version: 26
           registry-url: "https://registry.npmjs.org"
           package-manager-cache: false
-      - run: npm version "$TAG" --no-git-tag-version
+      - name: Set version from tag
+        run: |
+          if [[ ! "$TAG" =~ ^v?[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]; then
+            echo "::error::Release tag must be a semver version (e.g. v1.2.3): $TAG"
+            exit 1
+          fi
+          npm version "$TAG" --no-git-tag-version
         env:
           TAG: ${{ github.event.release.tag_name }}
-      - run: npm publish
+      # プレリリースは latest ではなく next として公開し、
+      # `npm create @cloudensis/hono` の利用者には配布しない
+      - name: Publish
+        run: |
+          if [ "$PRERELEASE" = "true" ]; then
+            npm publish --tag next
+          else
+            npm publish
+          fi
+        env:
+          PRERELEASE: ${{ github.event.release.prerelease }}
