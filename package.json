@@ -7,7 +7,12 @@
 		"create-hono": "index.js"
 	},
 	"scripts": {
-		"test": "node --test \"test/*.test.*\""
+		"test": "node --test \"test/*.test.*\"",
+		"lint": "biome check",
+		"format": "biome check --write"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.6.8"
 	},
 	"files": [
 		"index.js",
