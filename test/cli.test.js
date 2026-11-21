@@ -104,3 +104,49 @@ describe("エラー", () => {
 		assert.match(result.stderr, /Invalid project name/);
 	});
 });
+
+describe("オプション", () => {
+	it("--help で使い方を表示し、ディレクトリを作らない", async () => {
+		const cwd = await fs.mkdtemp(path.join(tmp, "help-"));
+		for (const flag of ["--help", "-h"]) {
+			const result = run(cwd, [flag]);
+			assert.equal(result.status, 0, result.stderr);
+			assert.match(result.stdout, /Usage:/);
+		}
+		assert.deepEqual(await fs.readdir(cwd), []);
+	});
+
+	it("--version でバージョンを表示する", async () => {
+		const pkg = JSON.parse(
+			await fs.readFile(new URL("../package.json", import.meta.url), "utf8"),
+		);
+		for (const flag of ["--version", "-v"]) {
+			const result = run(tmp, [flag]);
+			assert.equal(result.status, 0, result.stderr);
+			assert.equal(result.stdout.trim(), pkg.version);
+		}
+	});
+
+	it("未知のオプションはエラーにする", async () => {
+		const cwd = await fs.mkdtemp(path.join(tmp, "unknown-"));
+		const result = run(cwd, ["--foo"]);
+		assert.equal(result.status, 1);
+		assert.match(result.stderr, /--foo/);
+		assert.deepEqual(await fs.readdir(cwd), []);
+	});
+
+	it("引数が多すぎるときはエラーにする", async () => {
+		const cwd = await fs.mkdtemp(path.join(tmp, "too-many-"));
+		const result = run(cwd, ["a", "b"]);
+		assert.equal(result.status, 1);
+		assert.match(result.stderr, /Too many arguments/);
+		assert.deepEqual(await fs.readdir(cwd), []);
+	});
+
+	it("-- のあとは - で始まる名前も使える", async () => {
+		const cwd = await fs.mkdtemp(path.join(tmp, "dashdash-"));
+		const result = run(cwd, ["--", "-app"]);
+		assert.equal(result.status, 0, result.stderr);
+		assert.ok(existsSync(path.join(cwd, "-app/package.json")));
+	});
+});
