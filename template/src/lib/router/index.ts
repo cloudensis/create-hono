@@ -33,6 +33,26 @@ const assertNoConflicts = (routes: Route[]): void => {
 	}
 };
 
+/** ルートファイルの export が規約どおりか確かめる */
+const assertValidModule = ({ file, module }: Route): void => {
+	for (const key of Object.keys(module)) {
+		const method = key.toUpperCase();
+		if (key !== method && (methods as readonly string[]).includes(method)) {
+			throw new Error(
+				`${file}: "${key}" は登録されません。ハンドラーは "${method}" で export してください`,
+			);
+		}
+	}
+	if (!methods.some((method) => module[method])) {
+		throw new Error(
+			`${file}: ハンドラー（${methods.join(", ")}）を export していません。routes 以下の index.{ts,tsx} はルートとして扱われます`,
+		);
+	}
+	if (module.ssg && !module.GET) {
+		throw new Error(`${file}: ssg を使うには GET を export してください`);
+	}
+};
+
 const ssgMiddleware = ({
 	file,
 	module,
@@ -57,6 +77,7 @@ export function registerRoutes<E extends Env>(
 		module,
 		...parseRoute(file.slice("./routes/".length)),
 	}));
+	routes.forEach(assertValidModule);
 	assertNoConflicts(routes);
 	routes.sort(compareRoutes);
 

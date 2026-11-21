@@ -24,6 +24,12 @@
 - HTTP メソッド名（`GET`, `POST`, `PUT`, `DELETE`, `PATCH`, `OPTIONS`）でハンドラーを export します。
 - 固定 → パラメータ → catch-all の順に優先されます。
 - 同じ URL にマッチするルートがあると起動時にエラーになります。
+- 次の場合も起動時にエラーになります。
+  - `index.{ts,tsx}` がハンドラーを export していない（routes 以下の `index.ts` はすべてルートとして扱われるため、barrel ファイルなどは routes の外に置いてください）
+  - `Get` のように大文字以外で書いたメソッド名を export している
+  - `ssg = true` で GET を export していない
+  - パラメータ名が英数字と `_` 以外を含む、またはディレクトリ名に `: * ? { } ( ) [ ]` を含む
+  - catch-all（`[...name]`）のあとにディレクトリがある
 
 ```tsx
 import type { Handler } from "hono";
