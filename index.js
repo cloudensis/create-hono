@@ -3,7 +3,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { stdin, stdout } from "node:process";
-import { createInterface } from "node:readline/promises";
+import { createInterface } from "node:readline";
 import { fileURLToPath } from "node:url";
 
 const TEMPLATE_DIR = fileURLToPath(new URL("./template/", import.meta.url));
@@ -27,12 +27,31 @@ const isEmptyDir = async (dir) => {
 	}
 };
 
+/** 1 行だけ入力を受け取る。入力が EOF で終わったときは空文字を返す */
+const ask = (question) =>
+	new Promise((resolve) => {
+		const rl = createInterface({ input: stdin, output: stdout });
+		let answered = false;
+		// question() は改行なしで EOF になった最後の行を受け取れないため、
+		// line イベントで受け取る（line は close より先に同期的に発火する）
+		rl.once("line", (answer) => {
+			answered = true;
+			rl.close();
+			resolve(answer);
+		});
+		rl.on("close", () => {
+			if (answered) return;
+			stdout.write("\n");
+			resolve("");
+		});
+		rl.setPrompt(question);
+		rl.prompt();
+	});
+
 let target = process.argv[2];
 if (!target) {
-	const rl = createInterface({ input: stdin, output: stdout });
 	target =
-		(await rl.question(`Project name: (${TEMPLATE_NAME}) `)) || TEMPLATE_NAME;
-	rl.close();
+		(await ask(`Project name: (${TEMPLATE_NAME}) `)).trim() || TEMPLATE_NAME;
 }
 
 const root = path.resolve(target);

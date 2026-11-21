@@ -76,6 +76,21 @@ describe("引数なしで実行したとき", () => {
 		assert.equal(result.status, 0, result.stderr);
 		assert.ok(existsSync(path.join(cwd, "hono-app/package.json")));
 	});
+
+	it("入力が EOF で終わったら hono-app で生成する", async () => {
+		const cwd = await fs.mkdtemp(path.join(tmp, "eof-"));
+		const result = run(cwd, [], "");
+		assert.equal(result.status, 0, result.stderr);
+		assert.doesNotMatch(result.stderr, /unsettled top-level await/);
+		assert.ok(existsSync(path.join(cwd, "hono-app/package.json")));
+	});
+
+	it("改行なしで EOF になった入力も名前として使う", async () => {
+		const cwd = await fs.mkdtemp(path.join(tmp, "no-newline-"));
+		const result = run(cwd, [], "no-newline");
+		assert.equal(result.status, 0, result.stderr);
+		assert.ok(existsSync(path.join(cwd, "no-newline/package.json")));
+	});
 });
 
 describe("エラー", () => {
