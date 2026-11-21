@@ -7,7 +7,7 @@ import { pathToFileURL } from "node:url";
 
 const output = path.resolve(
 	process.argv[2],
-	".cloudflare/output/v0/workers/default",
+	".cloudflare/output/v1/workers/default",
 );
 const { default: app } = await import(
 	pathToFileURL(path.join(output, "bundle/index.js")).href
