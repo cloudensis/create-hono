@@ -45,9 +45,16 @@ describe("プロジェクトの生成", () => {
 		assert.match(await read("README.md"), /^# my-app\n/);
 	});
 
-	it("_gitignore を .gitignore にリネームする", () => {
-		assert.ok(existsSync(path.join(root, ".gitignore")));
-		assert.ok(!existsSync(path.join(root, "_gitignore")));
+	it("_gitignore / _npmrc を . 始まりにリネームする", () => {
+		for (const file of ["gitignore", "npmrc"]) {
+			assert.ok(existsSync(path.join(root, `.${file}`)), file);
+			assert.ok(!existsSync(path.join(root, `_${file}`)), file);
+		}
+	});
+
+	it(".npmrc で install scripts を無効にする", async () => {
+		const npmrc = await fs.readFile(path.join(root, ".npmrc"), "utf8");
+		assert.match(npmrc, /^ignore-scripts=true$/m);
 	});
 
 	it("動作確認の生成物はコピーしない", () => {

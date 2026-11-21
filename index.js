@@ -58,8 +58,10 @@ await fs.cp(TEMPLATE_DIR, root, {
 	filter: (src) =>
 		!IGNORED.has(path.relative(TEMPLATE_DIR, src).split(path.sep)[0]),
 });
-// npm は .gitignore を公開しないため、_gitignore として同梱している
-await fs.rename(path.join(root, "_gitignore"), path.join(root, ".gitignore"));
+// npm は .gitignore / .npmrc を公開しないため、_ 始まりの名前で同梱している
+for (const file of ["gitignore", "npmrc"]) {
+	await fs.rename(path.join(root, `_${file}`), path.join(root, `.${file}`));
+}
 
 const replacements = {
 	"package.json": [`"${TEMPLATE_NAME}"`, `"${name}"`],
