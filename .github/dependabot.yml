@@ -1,0 +1,17 @@
+version: 2
+updates:
+  # テンプレートの依存パッケージ (ルートの package.json は依存なし)
+  - package-ecosystem: "npm"
+    directory: "/template"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 3
+  - package-ecosystem: "github-actions"
+    directories:
+      - "/"
+      - "/template"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 3

@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 import { defaultPlugin, redirectPlugin, toSSG } from "hono/ssg";
 
 const output = new URL(
-	"../.cloudflare/output/v0/workers/default/",
+	"../.cloudflare/output/v1/workers/default/",
 	import.meta.url,
 );
 const { default: app } = await import(new URL("bundle/index.js", output).href);
