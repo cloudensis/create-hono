@@ -1,5 +1,9 @@
 # hono-app
 
+## 動作環境
+
+Node.js のバージョンは `package.json` の `engines` を参照してください。CI（`.github/workflows/*.yaml`）は `.node-version` のバージョンを使います。
+
 ## コマンド
 
 | コマンド            | 内容               |
