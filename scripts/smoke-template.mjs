@@ -55,3 +55,8 @@ it("末尾スラッシュはスラッシュなしへリダイレクトする", a
 it("存在しないパスは 404 を返す", async () => {
 	assert.equal(await status("/no/such/page"), 404);
 });
+
+it("記事ページは og:type を article にする", async () => {
+	assert.match(await body("/posts/1"), /<meta property="og:type" content="article"\/>/);
+	assert.match(await body("/"), /<meta property="og:type" content="website"\/>/);
+});
