@@ -15,7 +15,18 @@ const toPackageName = (name) =>
 		.trim()
 		.toLowerCase()
 		.replace(/[^a-z0-9-]+/g, "-")
+		.replace(/-{2,}/g, "-")
 		.replace(/^-+|-+$/g, "");
+
+/** Cloudflare の Worker 名の上限 */
+const MAX_NAME_LENGTH = 63;
+
+/** 表示する `cd` コマンドをコピーしてそのまま実行できるようにクォートする */
+const quoteForShell = (value) => {
+	if (/^[\w@%+=:,./-]+$/.test(value) && !value.startsWith("-")) return value;
+	if (process.platform === "win32") return `"${value.replaceAll('"', '""')}"`;
+	return `'${value.replaceAll("'", "'\\''")}'`;
+};
 
 const isEmptyDir = async (dir) => {
 	try {
@@ -39,6 +50,12 @@ const root = path.resolve(target);
 const name = toPackageName(path.basename(root));
 if (!name) {
 	console.error(`Invalid project name: ${target}`);
+	process.exit(1);
+}
+if (name.length > MAX_NAME_LENGTH) {
+	console.error(
+		`Project name must be ${MAX_NAME_LENGTH} characters or fewer (Cloudflare Worker name limit): ${name}`,
+	);
 	process.exit(1);
 }
 if (!(await isEmptyDir(root))) {
@@ -73,7 +90,7 @@ for (const [file, [from, to]] of Object.entries(replacements)) {
 }
 
 const relative = path.relative(process.cwd(), root) || ".";
-const cdPath = /\s/.test(relative) ? JSON.stringify(relative) : relative;
+const cdPath = quoteForShell(relative);
 console.log(`
 Created ${name} in ${root}
 
