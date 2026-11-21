@@ -11,6 +11,14 @@
 | `npm run format`    | 整形               |
 | `npm run typecheck` | 型チェック         |
 
+## 依存パッケージ
+
+- 最初の `npm install` で作られる `package-lock.json` はコミットしてください。CI（`.github/workflows/*.yaml`）は `npm ci` を使うため、lockfile がないと失敗します
+- `.npmrc` で次の設定をしています（サプライチェーン攻撃への対策）
+  - `ignore-scripts=true`: 依存パッケージの install scripts を実行しない
+  - `min-release-age=3`: 公開から 3 日以上経ったバージョンだけをインストールする
+- `cf` と `@cloudflare/vite-plugin` は現在 RC 版（`1.0.0-rc` / `2.0.0-rc`）です。安定版が出たら更新してください
+
 ## ルーティング
 
 `src/routes` 以下の `index.ts` / `index.tsx` がルートになります。
