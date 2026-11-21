@@ -1,10 +1,13 @@
 import { Hono } from "hono";
+import { secureHeaders } from "hono/secure-headers";
 import { trimTrailingSlash } from "hono/trailing-slash";
 import { type RouteModule, registerRoutes } from "./lib/router";
 import { renderer } from "./renderer";
 
 const app = new Hono();
 
+// SSG したページ用の public/_headers にも同じヘッダーを設定している
+app.use(secureHeaders());
 app.use(trimTrailingSlash({ alwaysRedirect: true }));
 app.use(renderer);
 

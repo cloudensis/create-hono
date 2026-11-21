@@ -43,6 +43,12 @@ export const ssgParams = () => [{ id: "1" }, { id: "2" }];
 
 SSG は Node で実行するため、`cloudflare:workers` や binding は使えません。
 
+## セキュリティヘッダー
+
+`src/index.tsx` の `secureHeaders()`（Worker のレスポンス）と `public/_headers`（SSG したページと静的ファイル）でセキュリティヘッダーを設定しています。SSG したページは Worker を通らないため、変更するときは両方を揃えてください。
+
+Content-Security-Policy は、読み込む外部リソースがアプリごとに異なるため設定していません。必要に応じて両方に追加してください。
+
 ## デプロイ
 
 GitHub で Release を公開すると `.github/workflows/deploy.yaml` がデプロイします。リポジトリの Secrets に `CLOUDFLARE_API_TOKEN` と `CLOUDFLARE_ACCOUNT_ID` を設定してください。

@@ -55,3 +55,24 @@ it("末尾スラッシュはスラッシュなしへリダイレクトする", a
 it("存在しないパスは 404 を返す", async () => {
 	assert.equal(await status("/no/such/page"), 404);
 });
+
+it("Worker のレスポンスにセキュリティヘッダーを付ける", async () => {
+	for (const url of ["/", "/api/health", "/no/such/page", "/posts/1/"]) {
+		const res = await app.request(url);
+		assert.equal(res.headers.get("X-Content-Type-Options"), "nosniff", url);
+		assert.equal(res.headers.get("X-Frame-Options"), "SAMEORIGIN", url);
+	}
+});
+
+it("SSG のページ用の _headers は Worker と同じヘッダーを設定する", async () => {
+	const file = await fs.readFile(path.join(output, "assets/_headers"), "utf8");
+	const headers = file
+		.split("\n")
+		.filter((line) => /^\s+\S/.test(line))
+		.map((line) => line.trim().split(/:\s*/, 2));
+	assert.ok(headers.length > 0);
+	const res = await app.request("/api/health");
+	for (const [name, value] of headers) {
+		assert.equal(res.headers.get(name), value, name);
+	}
+});
