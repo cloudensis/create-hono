@@ -35,7 +35,8 @@ describe("プロジェクトの生成", () => {
 	it("終了コード 0 で終わり、次の手順を表示する", () => {
 		assert.equal(result.status, 0, result.stderr);
 		assert.match(result.stdout, /Created my-app/);
-		assert.match(result.stdout, /cd "My App"/);
+		const quoted = process.platform === "win32" ? '"My App"' : "'My App'";
+		assert.ok(result.stdout.includes(`cd ${quoted}`), result.stdout);
 	});
 
 	it("名前を npm / Worker で使える形に整えて書き換える", async () => {
@@ -59,6 +60,22 @@ describe("プロジェクトの生成", () => {
 		]) {
 			assert.ok(!existsSync(path.join(root, name)), name);
 		}
+	});
+});
+
+describe("名前の整形と表示", () => {
+	it("連続した区切りは 1 つの - にまとめる", async () => {
+		const result = run(tmp, ["My  --  App"]);
+		assert.equal(result.status, 0, result.stderr);
+		assert.match(result.stdout, /Created my-app /);
+	});
+
+	it("シェルの特殊文字を含むパスもクォートして表示する", {
+		skip: process.platform === "win32",
+	}, () => {
+		const result = run(tmp, ["it's $HOME"]);
+		assert.equal(result.status, 0, result.stderr);
+		assert.ok(result.stdout.includes(`cd 'it'\\''s $HOME'`), result.stdout);
 	});
 });
 
@@ -96,6 +113,15 @@ describe("エラー", () => {
 		assert.equal(result.status, 1);
 		assert.match(result.stderr, /is a file/);
 		assert.doesNotMatch(result.stderr, /ENOTDIR/);
+	});
+
+	it("Worker 名の上限 (63 文字) を超える名前はエラーにする", async () => {
+		const ok = "a".repeat(63);
+		assert.equal(run(tmp, [ok]).status, 0);
+		const result = run(tmp, ["a".repeat(64)]);
+		assert.equal(result.status, 1);
+		assert.match(result.stderr, /63 characters or fewer/);
+		assert.ok(!existsSync(path.join(tmp, "a".repeat(64))));
 	});
 
 	it("使える文字を含まない名前はエラーにする", () => {
