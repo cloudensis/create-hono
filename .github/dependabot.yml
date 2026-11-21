@@ -1,8 +1,10 @@
 version: 2
 updates:
-  # テンプレートの依存パッケージ (ルートの package.json は依存なし)
+  # ルート (開発用の Biome) とテンプレートの依存パッケージ
   - package-ecosystem: "npm"
-    directory: "/template"
+    directories:
+      - "/"
+      - "/template"
     schedule:
       interval: "weekly"
     cooldown:

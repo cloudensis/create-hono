@@ -104,3 +104,35 @@ describe("エラー", () => {
 		assert.match(result.stderr, /Invalid project name/);
 	});
 });
+
+describe("生成に失敗したとき", () => {
+	/** 書き換え対象を消したテンプレートで CLI を動かす */
+	const runWithBrokenTemplate = async (args, cwd) => {
+		const pkg = await fs.mkdtemp(path.join(tmp, "broken-cli-"));
+		await fs.cp(path.dirname(CLI), pkg, {
+			recursive: true,
+			filter: (src) => !/node_modules|\.git$/.test(path.basename(src)),
+		});
+		await fs.writeFile(path.join(pkg, "template/README.md"), "no title\n");
+		return spawnSync(process.execPath, [path.join(pkg, "index.js"), ...args], {
+			cwd,
+			encoding: "utf8",
+		});
+	};
+
+	it("書き換え対象が見つからなければエラーにし、作ったディレクトリを消す", async () => {
+		const cwd = await fs.mkdtemp(path.join(tmp, "fail-"));
+		const result = await runWithBrokenTemplate(["app"], cwd);
+		assert.equal(result.status, 1);
+		assert.match(result.stderr, /README\.md/);
+		assert.ok(!existsSync(path.join(cwd, "app")));
+	});
+
+	it("既存の空ディレクトリは残し、中身だけを消す", async () => {
+		const cwd = await fs.mkdtemp(path.join(tmp, "fail-existing-"));
+		await fs.mkdir(path.join(cwd, "app"));
+		const result = await runWithBrokenTemplate(["app"], cwd);
+		assert.equal(result.status, 1);
+		assert.deepEqual(await fs.readdir(path.join(cwd, "app")), []);
+	});
+});
